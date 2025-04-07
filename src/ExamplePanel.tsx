@@ -582,10 +582,10 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
           {(paramList ?? []).map((result) => (
             <>
-              <div style={{margin: "0px 4px 0px 4px"}} key={result.name}>{result.name}:</div>
-              <div style={{margin: "0px 4px 0px 4px"}}>{getType(result.value)}</div>
-              <div style={{margin: "0px 4px 0px 4px"}}>{getParameterValue(result.value)}</div>
-              <div style={{margin: "0px 4px 0px 4px"}}>
+              <div style={{margin: "0px 4px 0px 4px", maxWidth: "200px" }} key={result.name}>{result.name}:</div>
+              <div style={{margin: "0px 4px 0px 4px", maxWidth: "70px" }}>{getType(result.value)}</div>
+              <div style={{margin: "0px 4px 0px 4px", maxWidth: "80px" }}>{getParameterValue(result.value)}</div>
+              <div style={{margin: "0px 4px 0px 4px", maxWidth: "100px" }}>
                 {createInputBox(result)}
                 </div>
             </>
