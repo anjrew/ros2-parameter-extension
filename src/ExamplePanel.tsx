@@ -27,7 +27,6 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
 
   // Log all the state variables to the console
-  console.log("Node: " + node);
   console.log("Param List: " + paramList);
   for (let i = 0; i < paramList?.length!; i++) {
     console.log("Param List[" + i + "]: ", JSON.parse(JSON.stringify(paramList![i], (_, value) =>
@@ -587,8 +586,8 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       <h1>ROS2 Parameter Extension</h1>
       <label style={labelStyle}>Node:</label>
       <select
-        value={node}
-        onChange={(event) => { setNode(event.target.value); updateParamList(event.target.value); }}
+        value={selectedNode}
+        onChange={(event) => { setSelectedNode(event.target.value); updateParamList(event.target.value); }}
         style={dropDownStyle}
         >
         <option selected hidden>Select a Node</option>
