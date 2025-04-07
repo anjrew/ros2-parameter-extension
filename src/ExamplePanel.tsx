@@ -10,10 +10,7 @@ type PanelState = { selectedNode?: string; };
 function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Element {
 
   const [renderDone, setRenderDone] = useState<(() => void) | undefined>();
-  const [node, setNode] = useState<string | undefined>(() => {
-    const initialState = context.initialState as PanelState;
-    return initialState?.selectedNode;
-  });
+
   const [status, setStatus] = useState<string | undefined>();
 
   const [paramList, setParamList] = useState<Array<Parameter>>();
@@ -229,7 +226,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
     if (selectedNode)
     {
         setSrvParamList(tempList);
-        context.callService?.(node + "/set_parameters", {parameters: srvParamList})
+        context.callService?.(selectedNode + "/set_parameters", {parameters: srvParamList})
         .then(() => {
           updateParamList(selectedNode);
           setStatus("parameters set");
@@ -402,7 +399,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       files[0]?.text()
       .then((value: string) => {
         value = value.replaceAll(/[^\S\r\n]/gi, "");
-        value = value.replace(node + ":\n", "");
+        value = value.replace(selectedNode + ":\n", "");
         value = value.replace("ros__parameters:\n", "");
 
         let params: string[] = value.split("\n");
