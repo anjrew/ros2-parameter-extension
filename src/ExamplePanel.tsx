@@ -5,16 +5,15 @@ import type {Parameter, ParameterValue, SetSrvParam} from "parameter_types";
 
 // v0.0.1 //
 
-let node: string;
-let paramNameList: string[];
-let paramValList: ParameterValue[];
 type PanelState = { selectedNode?: string; };
 
 function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Element {
 
-
   const [renderDone, setRenderDone] = useState<(() => void) | undefined>();
-
+  const [node, setNode] = useState<string | undefined>(() => {
+    const initialState = context.initialState as PanelState;
+    return initialState?.selectedNode;
+  });
   const [status, setStatus] = useState<string | undefined>();
 
   const [paramList, setParamList] = useState<Array<Parameter>>();
@@ -28,6 +27,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
     const initialState = context.initialState as PanelState;
     return initialState?.selectedNode;
   });
+
 
   // Log all the state variables to the console
   console.log("Node: " + node);
@@ -46,7 +46,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   useLayoutEffect( () => {
 
     context.onRender = (renderState: RenderState, done) => {
-
+      
       setRenderDone(() => done);
       updateNodeList();
 
@@ -59,10 +59,14 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
         setBgColor("#4d4d4d");
         setLoadButtonBgColor("#4d4d4d");
       }
+
+
     };
 
     //If new topics are found, context.onRender() will update the list of nodes
     context.watch("topics");
+
+    context.watch("parameters");
 
     //If colorScheme changes, context.onRender() will change styling to match new color scheme
     context.watch("colorScheme");
@@ -240,7 +244,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
    * @param name The name of the parameter that will be set to 'val'
    */
   const updateSrvParamList = (name: string, val: string) => {
-    let idx: number = paramNameList?.indexOf(name)!;
+    let idx: number = paramList?.map(x => x.name)?.indexOf(name)!;
     let tempList: SetSrvParam[] = srvParamList!;
     let tempValList: string[] = [];
 
@@ -339,7 +343,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       setSrvParamList(tempList)
     }
 
-    paramValList.forEach(element => {
+    paramList?.map(p => p.value).forEach(element => {
       tempValList.push(getParameterValue(element));
     });
   }
@@ -565,7 +569,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       <label style={labelStyle}>Node:</label>
       <select
         value={node}
-        onChange={(event) => { node = event.target.value; updateParamList(node); }}
+        onChange={(event) => { setNode(event.target.value); updateParamList(event.target.value); }}
         style={dropDownStyle}
         >
         <option selected hidden>Select a Node</option>
