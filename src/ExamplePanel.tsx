@@ -9,12 +9,18 @@ import type {Parameter, ParameterValue, SetSrvParam} from "parameter_types";
 let paramNameList: string[];
 let paramValList: ParameterValue[];
 
+type PanelState = {
+  selectedNode: string;
+}
 
 function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Element {
 
 
   const [renderDone, setRenderDone] = useState<(() => void) | undefined>();
-  const [node, setNode] = useState<string>("");
+  const [node, setNode] = useState<string | undefined>(() => {
+    const initialState = context.initialState as PanelState;
+    return initialState?.selectedNode;
+  });
   const [status, setStatus] = useState<string | undefined>();
 
   const [paramList, setParamList] = useState<Array<Parameter>>();
@@ -59,6 +65,9 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
   useEffect(() => {
     updateParamList();
+    context.saveState({
+      selectedNode: node,
+    });
   }, [node]);
 
   /**
