@@ -308,6 +308,9 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
    * @returns A dropdown if param.value.type == 1, a textbox otherwise
    */
   const createInputBox = (param: Parameter) => {
+    if(param === undefined) { return; }
+    if(param.value === undefined) { return; }
+
     if(param.value.type == 1) {
       return(
         <select
