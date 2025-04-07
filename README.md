@@ -16,3 +16,9 @@ This can either be done by making sure [rosbridge_server](https://github.com/Rob
 or solely the [rosapi node](https://github.com/RobotWebTools/rosbridge_suite/blob/ros2/rosapi/scripts/rosapi_node):
 
 ```ros2 run rosapi rosapi_node```
+
+## Compile from source
+
+`npm install` to install dependencies
+`npm run local-install` to build and install for a local copy of the Foxglove Studio Desktop App
+`npm run package` to package it up into a .foxe file

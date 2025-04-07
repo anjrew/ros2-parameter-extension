@@ -12,6 +12,13 @@
 		},
 		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
 	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"Gxl.git-graph-3"
+			]
+		}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],

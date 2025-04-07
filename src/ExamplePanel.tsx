@@ -8,7 +8,7 @@ import type {Parameter, ParameterValue, SetSrvParam} from "parameter_types";
 let node: string;
 let paramNameList: string[];
 let paramValList: ParameterValue[];
-
+type PanelState = { selectedNode?: string; };
 
 function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Element {
 
@@ -24,6 +24,23 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   const [colorScheme, setColorScheme] = useState<string>();
   const [bgColor, setBgColor] = useState("#d6d6d6");
   const [loadButtonBgColor, setLoadButtonBgColor] = useState("#d6d6d6");
+  const [selectedNode, setSelectedNode] = useState<string | undefined>(() => {
+    const initialState = context.initialState as PanelState;
+    return initialState?.selectedNode;
+  });
+
+  // Log all the state variables to the console
+  console.log("Node: " + node);
+  console.log("Param List: " + paramList);
+  console.log("Srv Param List: " + srvParamList);
+  console.log("Node List: " + nodeList);
+  console.log("Color Scheme: " + colorScheme);
+  console.log("Background Color: " + bgColor);  
+  console.log("Load Button Background Color: " + loadButtonBgColor);
+  console.log("Selected Node: " + selectedNode);
+  console.log("Status: " + status);
+  // Log the context object to the console
+  console.log("Context: ", context);
 
 
   useLayoutEffect( () => {
@@ -56,6 +73,20 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   useEffect(() => {
     renderDone?.();
   }, [renderDone]);
+  
+  // Call updateParamList(selectedNode) when selectedNode changes
+  useEffect(() => {
+    if (selectedNode) {
+      updateParamList(selectedNode);
+    }
+  }, [selectedNode]);
+
+  // hook to save the state whenever selectedNode changes:
+  useEffect(() => {
+    if (selectedNode) {
+      context.saveState({ selectedNode });
+    }
+  }, [selectedNode, context]);
 
   /**
    * converts string representation of a boolean to a boolean
@@ -113,9 +144,17 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
    */
   const updateNodeList = () => {
     setStatus("retreiving nodes...")
+    console.log("Updating node list...");
     context.callService?.("/rosapi/nodes", {})
     .then((_values: unknown) =>{
+      console.log("Node list retrieved: " + _values);
+      if (_values === undefined) {
+        console.log("No nodes found");
+        setStatus("error, no nodes found");
+        return;
+      }
       setNodeList(((_values as any).nodes as string[]).sort());
+      console.log("Node list updated: " + nodeList);
       setStatus("nodes retreived");
     })
     .catch((_error: Error) => { setStatus(_error.toString()); });
@@ -124,31 +163,27 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   /**
    * Retrieves a list of all parameters for the current node and their values
    */
-  const updateParamList = () =>{
-
-    context.callService?.(node + "/list_parameters", {})
-    .then((_value: unknown) => {
-      paramNameList = (_value as any).result.names as string[];
-
-      context.callService?.(node + "/get_parameters", {names: paramNameList})
+    const updateParamList = (currentNode: string) => {
+      setStatus("retreiving parameters...");
+      context.callService?.(currentNode + "/list_parameters", {})
       .then((_value: unknown) => {
-        paramValList = (_value as any).values as ParameterValue[];
-
-        let tempList:Array<Parameter> = [];
-        for (let i = 0; i < paramNameList.length; i++) {
-          tempList.push({name: paramNameList[i]!, value: paramValList[i]!});
-        }
-        if(tempList.length > 0)
+        const paramNameList = (_value as any).result.names as string[];
+        context.callService?.(currentNode + "/get_parameters", {names: paramNameList})
+        .then((_value: unknown) => {
+          const paramValList = (_value as any).values as ParameterValue[];
+          const tempList: Array<Parameter> = paramNameList.map((name, i) => ({ name, value: paramValList[i]! }));
           setParamList(tempList);
-
-        if(paramNameList !== undefined) {
-          setSrvParamList(new Array(paramList?.length));
-        }
+          setSrvParamList(new Array(tempList.length));
+          setStatus("parameters retreived");
+        })
+        .catch(() => {
+          setStatus("error, failed to retrieve parameter values");
+        });
       })
-      .catch(() => {setStatus("error, failed to retreive parameter values")});
-    })
-    .catch(() => {setStatus("error, failed to retreive parameter list")});
-  }
+      .catch(() => {
+        setStatus("error, failed to retreive parameter list");
+      });
+    };
 
   /**
    * Sets new values to all parameters with an inputted new value
@@ -166,16 +201,19 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       }
     }
 
-    setSrvParamList(tempList);
-    context.callService?.(node + "/set_parameters", {parameters: srvParamList})
-    .then(() => {
-      updateParamList();
-      setStatus("parameters set");
-    })
-    .catch((error: Error) => {
-      updateParamList();
-      setStatus("Error: " + JSON.stringify(error));
-    });
+    if (selectedNode)
+    {
+        setSrvParamList(tempList);
+        context.callService?.(node + "/set_parameters", {parameters: srvParamList})
+        .then(() => {
+          updateParamList(selectedNode);
+          setStatus("parameters set");
+        })
+        .catch((error: Error) => {
+          updateParamList(selectedNode);
+          setStatus("Error: " + JSON.stringify(error));
+        });
+    }
   }
 
 
@@ -308,15 +346,14 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
    * @returns A dropdown if param.value.type == 1, a textbox otherwise
    */
   const createInputBox = (param: Parameter) => {
+    console.log("Creating input box for: " + param.name);
     if(param.value.type == 1) {
       return(
-        <select
-        style={dropDownStyle}
-        onChange={(event) => { updateSrvParamList(param.name, event.target.value) }}
-        >
-          <option selected hidden></option>
-          <option>true</option>
-          <option>false</option>
+        <select value={selectedNode || ""} onChange={(event) => setSelectedNode(event.target.value)}>
+          <option selected hidden>Select a Node</option>
+          {(nodeList ?? []).map((node) => (
+            <option key={node} value={node}>{node}</option>
+          ))}
         </select>
       );
     }
@@ -524,7 +561,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       <label style={labelStyle}>Node:</label>
       <select
         value={node}
-        onChange={(event) => { node = event.target.value; updateParamList(); }}
+        onChange={(event) => { node = event.target.value; updateParamList(node); }}
         style={dropDownStyle}
         >
         <option selected hidden>Select a Node</option>
