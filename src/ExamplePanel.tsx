@@ -5,7 +5,7 @@ import type {Parameter, ParameterValue, SetSrvParam} from "parameter_types";
 
 // v0.0.1 //
 
-let node: string;
+
 let paramNameList: string[];
 let paramValList: ParameterValue[];
 
@@ -14,7 +14,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
 
   const [renderDone, setRenderDone] = useState<(() => void) | undefined>();
-
+  const [node, setNode] = useState<string>("");
   const [status, setStatus] = useState<string | undefined>();
 
   const [paramList, setParamList] = useState<Array<Parameter>>();
@@ -56,6 +56,10 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   useEffect(() => {
     renderDone?.();
   }, [renderDone]);
+
+  useEffect(() => {
+    updateParamList();
+  }, [node]);
 
   /**
    * converts string representation of a boolean to a boolean
@@ -527,7 +531,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       <label style={labelStyle}>Node:</label>
       <select
         value={node}
-        onChange={(event) => { node = event.target.value; updateParamList(); }}
+        onChange={(event) => { setNode(event.target.value); }}
         style={dropDownStyle}
         >
         <option selected hidden>Select a Node</option>
