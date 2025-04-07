@@ -536,7 +536,6 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
                   fontFamily: "helvetica",
                   fontSize: "1rem",
                   }}>
-      <h1>ROS2 Parameter Extension</h1>
       <label style={labelStyle}>Node:</label>
       <select
         value={node}
@@ -567,14 +566,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
           <input type="file" style={{display: "none"}} onChange={(event) => {loadFile(event.target.files)}}/>
             Load
         </label>
-        <br/>
-
-        <label style={labelStyle}>Save to YAML</label>
-        <br/>
-
-        <label style={labelStyle}>Parameter List</label>
-        <br/>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 0.75fr 1fr 0.75fr", rowGap: "0.2rem",  }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 0.75fr 1fr 0.75fr", rowGap: "0.2rem",  }}>
           <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" , }}>Parameter</b>
           <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Type</b>
           <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Value</b>
