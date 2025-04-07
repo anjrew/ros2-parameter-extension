@@ -17,6 +17,19 @@ or solely the [rosapi node](https://github.com/RobotWebTools/rosbridge_suite/blo
 
 ```ros2 run rosapi rosapi_node```
 
+Use in a launch file:
+```python
+    rosbridge_launch = IncludeLaunchDescription(
+        AnyLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory("rosbridge_server"),
+                "launch",
+                "rosbridge_websocket_launch.xml",
+            )
+        ),
+    )
+```    
+
 ## Compile from source
 
 `npm install` to install dependencies

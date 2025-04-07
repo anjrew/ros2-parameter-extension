@@ -157,7 +157,11 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       console.log("Node list updated: " + nodeList);
       setStatus("nodes retreived");
     })
-    .catch((_error: Error) => { setStatus(_error.toString()); });
+    .catch((_error: Error) => { 
+      const msg = _error.toString();
+      console.error(msg);
+      setStatus(msg); 
+    });
   }
 
   /**
