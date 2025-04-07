@@ -32,6 +32,13 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   // Log all the state variables to the console
   console.log("Node: " + node);
   console.log("Param List: " + paramList);
+  for (let i = 0; i < paramList?.length!; i++) {
+    console.log("Param List[" + i + "]: ", JSON.parse(JSON.stringify(paramList![i], (_, value) =>
+      typeof value === 'bigint'
+          ? value.toString()
+          : value // return everything else unchanged
+  )));
+  }
   console.log("Srv Param List: " + srvParamList);
   console.log("Node List: " + nodeList);
   console.log("Color Scheme: " + colorScheme);
@@ -129,6 +136,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   */
   const getParameterValue = (param: ParameterValue) => {
     if(param === undefined) { return "undefined"; }
+    console.log("Getting parameter value for: " + param);
     switch(param.type) {
       case 1:  return param.bool_value.toString();
       case 2:  return param.integer_value.toString();
@@ -177,7 +185,16 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       .then((_value: unknown) => {
         const paramNameList = (_value as any).result.names as string[];
         context.callService?.(currentNode + "/get_parameters", {names: paramNameList})
-        .then((_value: unknown) => {
+        .then((_value: any) => {
+          console.log("Parameter list retrieved: " + _value);
+          console.log('New value', JSON.parse(JSON.stringify(_value, (_, value) =>
+            typeof value === 'bigint'
+                ? value.toString()
+                : value // return everything else unchanged
+          )));
+          // Print the keys and values of the object
+          console.log("Keys and values of the object:", Object.entries(_value).map(([key, value]) => `${key}: ${JSON.stringify(value)}`));
+          
           const paramValList = (_value as any).values as ParameterValue[];
           const tempList: Array<Parameter> = paramNameList.map((name, i) => ({ name, value: paramValList[i]! }));
           setParamList(tempList);
@@ -269,6 +286,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
         },
       };
       let valStrArr: string[] = [];
+      console.log("Updating parameter list for: " + name);
       switch (paramList![idx]?.value.type!) {
         case 1:
             ssp.name = name;
@@ -354,7 +372,11 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
    * @returns A dropdown if param.value.type == 1, a textbox otherwise
    */
   const createInputBox = (param: Parameter) => {
-    console.log("Creating input box for: " + param.name);
+    console.log("Creating input box for 1: " + param.name, "With value", param.value, "and whole", param);
+    if(param.value === undefined) {
+      return(<input style={inputStyle} placeholder="undefined" disabled/>);
+    }
+
     if(param.value.type == 1) {
       return(
         <select value={selectedNode || ""} onChange={(event) => setSelectedNode(event.target.value)}>
