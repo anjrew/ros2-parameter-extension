@@ -180,7 +180,11 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
     }
 
     setSrvParamList(tempList);
-    context.callService?.(node + "/set_parameters", {parameters: srvParamList})
+    const serviceUrl = node + "/set_parameters";
+    console.log("service_url", serviceUrl)
+    const parametersPayload = { parameters: srvParamList };
+    console.log("parameters_payload", parametersPayload)
+    context.callService?.(serviceUrl, parametersPayload)
     .then(() => {
       updateParamList();
       setStatus("parameters set");
@@ -566,7 +570,8 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
           <input type="file" style={{display: "none"}} onChange={(event) => {loadFile(event.target.files)}}/>
             Load
         </label>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 0.75fr 1fr 0.75fr", rowGap: "0.2rem",  }}>
+  
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 0.75fr 1fr 0.75fr", rowGap: "0.2rem",  }}>
           <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" , }}>Parameter</b>
           <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Type</b>
           <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Value</b>
