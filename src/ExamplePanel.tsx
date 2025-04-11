@@ -1,7 +1,7 @@
-import { PanelExtensionContext, RenderState} from "@foxglove/studio";
+import { PanelExtensionContext, RenderState } from "@foxglove/studio";
 import { useLayoutEffect, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import type {Parameter, ParameterValue, SetSrvParam} from "parameter_types";
+import type { Parameter, ParameterValue, SetSrvParam } from "parameter_types";
 
 // v0.0.1 //
 
@@ -32,7 +32,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   const [loadButtonBgColor, setLoadButtonBgColor] = useState("#d6d6d6");
 
 
-  useLayoutEffect( () => {
+  useLayoutEffect(() => {
 
     context.onRender = (renderState: RenderState, done) => {
 
@@ -41,7 +41,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
       //Manage some styling for light and dark theme
       setColorScheme(renderState.colorScheme);
-      if(renderState.colorScheme == "light") {
+      if (renderState.colorScheme == "light") {
         setBgColor("#d6d6d6");
         setLoadButtonBgColor("#d6d6d6");
       } else if (renderState.colorScheme == "dark") {
@@ -76,10 +76,10 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
    * @returns true or false
    */
   const stringToBoolean = (stringValue: string) => {
-    switch(stringValue?.toLowerCase()?.trim()){
-        case "true": return true;
-        case "false": return false;
-        default: return undefined;
+    switch (stringValue?.toLowerCase()?.trim()) {
+      case "true": return true;
+      case "false": return false;
+      default: return undefined;
     }
   }
 
@@ -92,7 +92,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
     let bool: boolean = true;
     strArr.forEach(element => {
       console.log(stringToBoolean(element));
-      if(stringToBoolean(element) === undefined)
+      if (stringToBoolean(element) === undefined)
         bool = false;
     });
 
@@ -106,17 +106,17 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
    * @returns String representation of param
   */
   const getParameterValue = (param: ParameterValue) => {
-    if(param === undefined) { return "undefined"; }
-    switch(param.type) {
-      case 1:  return param.bool_value.toString();
-      case 2:  return param.integer_value.toString();
-      case 3:  return param.double_value.toString();
-      case 4:  return param.string_value;
-      case 5:  return `[${param.byte_array_value.toString()}]`;
-      case 6:  return `[${param.bool_array_value.toString()}]`;
-      case 7:  return `[${param.integer_array_value.toString()}]`;
-      case 8:  return `[${param.double_array_value.toString()}]`;
-      case 9:  return `[${param.string_array_value.toString()}]`;
+    if (param === undefined) { return "undefined"; }
+    switch (param.type) {
+      case 1: return param.bool_value.toString();
+      case 2: return param.integer_value.toString();
+      case 3: return param.double_value.toString();
+      case 4: return param.string_value;
+      case 5: return `[${param.byte_array_value.toString()}]`;
+      case 6: return `[${param.bool_array_value.toString()}]`;
+      case 7: return `[${param.integer_array_value.toString()}]`;
+      case 8: return `[${param.double_array_value.toString()}]`;
+      case 9: return `[${param.string_array_value.toString()}]`;
       default: return "error, invalid type...";
     }
   }
@@ -127,40 +127,40 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   const updateNodeList = () => {
     setStatus("retreiving nodes...")
     context.callService?.("/rosapi/nodes", {})
-    .then((_values: unknown) =>{
-      setNodeList(((_values as any).nodes as string[]).sort());
-      setStatus("nodes retreived");
-    })
-    .catch((_error: Error) => { setStatus(_error.toString()); });
+      .then((_values: unknown) => {
+        setNodeList(((_values as any).nodes as string[]).sort());
+        setStatus("nodes retreived");
+      })
+      .catch((_error: Error) => { setStatus(_error.toString()); });
   }
 
   /**
    * Retrieves a list of all parameters for the current node and their values
    */
-  const updateParamList = () =>{
+  const updateParamList = () => {
 
     context.callService?.(node + "/list_parameters", {})
-    .then((_value: unknown) => {
-      paramNameList = (_value as any).result.names as string[];
-
-      context.callService?.(node + "/get_parameters", {names: paramNameList})
       .then((_value: unknown) => {
-        paramValList = (_value as any).values as ParameterValue[];
+        paramNameList = (_value as any).result.names as string[];
 
-        let tempList:Array<Parameter> = [];
-        for (let i = 0; i < paramNameList.length; i++) {
-          tempList.push({name: paramNameList[i]!, value: paramValList[i]!});
-        }
-        if(tempList.length > 0)
-          setParamList(tempList);
+        context.callService?.(node + "/get_parameters", { names: paramNameList })
+          .then((_value: unknown) => {
+            paramValList = (_value as any).values as ParameterValue[];
 
-        if(paramNameList !== undefined) {
-          setSrvParamList(new Array(paramList?.length));
-        }
+            let tempList: Array<Parameter> = [];
+            for (let i = 0; i < paramNameList.length; i++) {
+              tempList.push({ name: paramNameList[i]!, value: paramValList[i]! });
+            }
+            if (tempList.length > 0)
+              setParamList(tempList);
+
+            if (paramNameList !== undefined) {
+              setSrvParamList(new Array(paramList?.length));
+            }
+          })
+          .catch(() => { setStatus("error, failed to retreive parameter values") });
       })
-      .catch(() => {setStatus("error, failed to retreive parameter values")});
-    })
-    .catch(() => {setStatus("error, failed to retreive parameter list")});
+      .catch(() => { setStatus("error, failed to retreive parameter list") });
   }
 
   /**
@@ -172,8 +172,8 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
     let tempList: SetSrvParam[] = srvParamList!;
 
-    for(let i: number = 0; i < tempList.length; i++) {
-      if(tempList[i] == null) {
+    for (let i: number = 0; i < tempList.length; i++) {
+      if (tempList[i] == null) {
         tempList.splice(i, 1);
         i = -1;
       }
@@ -185,14 +185,14 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
     const parametersPayload = { parameters: srvParamList };
     console.log("parameters_payload", parametersPayload)
     context.callService?.(serviceUrl, parametersPayload)
-    .then(() => {
-      updateParamList();
-      setStatus("parameters set");
-    })
-    .catch((error: Error) => {
-      updateParamList();
-      setStatus("Error: " + JSON.stringify(error));
-    });
+      .then(() => {
+        updateParamList();
+        setStatus("parameters set");
+      })
+      .catch((error: Error) => {
+        updateParamList();
+        setStatus("Error: " + JSON.stringify(error));
+      });
   }
 
 
@@ -219,7 +219,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
     let tempList: SetSrvParam[] = srvParamList!;
     let tempValList: string[] = [];
 
-    if(val === "") {
+    if (val === "") {
       const emptyP: SetSrvParam = {};
       tempList[idx] = emptyP;
     } else {
@@ -242,9 +242,9 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       let valStrArr: string[] = [];
       switch (paramList![idx]?.value.type!) {
         case 1:
-            ssp.name = name;
-            ssp.value!.type = 1;
-            ssp.value!.bool_value = stringToBoolean(val);
+          ssp.name = name;
+          ssp.value!.type = 1;
+          ssp.value!.bool_value = stringToBoolean(val);
           break;
 
         case 2:
@@ -272,9 +272,9 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
         case 6:
           valStrArr = val.replace(" ", "").replace("[", "").replace("]", "").split(",");
-          if(isBooleanArr(valStrArr)) {
+          if (isBooleanArr(valStrArr)) {
             let valBoolArr: boolean[] = valStrArr.map((element) => {
-              if(element == "true")
+              if (element == "true")
                 return true;
               return false;
             });
@@ -300,7 +300,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
         case 9:
           val.replace(" ", "");
-          if(val.charAt(0) == '[' && val.charAt(val.length - 1) == ']')
+          if (val.charAt(0) == '[' && val.charAt(val.length - 1) == ']')
             val = val.substring(1, val.length - 1);
           valStrArr = val.split(",");
           ssp.name = name;
@@ -325,14 +325,14 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
    * @returns A dropdown if param.value.type == 1, a textbox otherwise
    */
   const createInputBox = (param: Parameter) => {
-    if(param === undefined) { return; }
-    if(param.value === undefined) { return; }
+    if (param === undefined) { return; }
+    if (param.value === undefined) { return; }
 
-    if(param.value.type == 1) {
-      return(
+    if (param.value.type == 1) {
+      return (
         <select
-        style={dropDownStyle}
-        onChange={(event) => { updateSrvParamList(param.name, event.target.value) }}
+          style={dropDownStyle}
+          onChange={(event) => { updateSrvParamList(param.name, event.target.value) }}
         >
           <option selected hidden></option>
           <option>true</option>
@@ -340,8 +340,8 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
         </select>
       );
     }
-    return(
-      <input style={inputStyle} placeholder={getParameterValue(param.value)} onChange={(event) => { updateSrvParamList(param.name, event.target.value) }}/>
+    return (
+      <input style={inputStyle} placeholder={getParameterValue(param.value)} onChange={(event) => { updateSrvParamList(param.name, event.target.value) }} />
     );
   }
 
@@ -351,38 +351,38 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
    * @param files the YAML file to be uploaded
    */
   const loadFile = (files: FileList | null) => {
-    if(files !== null) {
+    if (files !== null) {
       files[0]?.text()
-      .then((value: string) => {
-        value = value.replaceAll(/[^\S\r\n]/gi, "");
-        value = value.replace(node + ":\n", "");
-        value = value.replace("ros__parameters:\n", "");
+        .then((value: string) => {
+          value = value.replaceAll(/[^\S\r\n]/gi, "");
+          value = value.replace(node + ":\n", "");
+          value = value.replace("ros__parameters:\n", "");
 
-        let params: string[] = value.split("\n");
-        for(let i = 0; i < params.length; i++) {
+          let params: string[] = value.split("\n");
+          for (let i = 0; i < params.length; i++) {
 
-          if(params[i]!.charAt(0) != '-' && params[i]!.charAt(params[i]!.length - 1) != ':') {
-            let temp: string[]= params[i]!.split(":");
-            updateSrvParamList(temp[0]!, temp[1]!);
+            if (params[i]!.charAt(0) != '-' && params[i]!.charAt(params[i]!.length - 1) != ':') {
+              let temp: string[] = params[i]!.split(":");
+              updateSrvParamList(temp[0]!, temp[1]!);
 
-          } else if(params[i]!.charAt(params[i]!.length - 1) == ':') {
-            let tempName: string = params[i]!.replace(":", "").trim();
-            let tempVal: string = "";
+            } else if (params[i]!.charAt(params[i]!.length - 1) == ':') {
+              let tempName: string = params[i]!.replace(":", "").trim();
+              let tempVal: string = "";
 
-            while(i + 1 < params.length && params[++i]!.charAt(0) == '-') {
-              tempVal = tempVal.concat(params[i]!.replace("-", "").trim() + ",");
+              while (i + 1 < params.length && params[++i]!.charAt(0) == '-') {
+                tempVal = tempVal.concat(params[i]!.replace("-", "").trim() + ",");
+              }
+
+              i--;
+              tempVal = tempVal.substring(0, tempVal.length - 1);
+              updateSrvParamList(tempName, tempVal);
             }
-
-            i--;
-            tempVal = tempVal.substring(0, tempVal.length-1);
-            updateSrvParamList(tempName, tempVal);
           }
-        }
-        setParam();
-      })
-      .catch((error: Error) => {
-        console.log(error)
-      });
+          setParam();
+        })
+        .catch((error: Error) => {
+          console.log(error)
+        });
     }
   }
 
@@ -394,15 +394,15 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   //////////////////////// CSS STYLING //////////////////////////////
   interface ParamDictionary {
     [key: string]: number | string | number[]; // Mixed types for flexibility
-}
-  let setButtonStyle: ParamDictionary= { backgroundColor: '#a37be7' };
-  let loadButtonStyle: ParamDictionary = {  backgroundColor: '#a37be7'};
+  }
+  let setButtonStyle: ParamDictionary = { backgroundColor: '#a37be7' };
+  let loadButtonStyle: ParamDictionary = { backgroundColor: '#a37be7' };
   let dropDownStyle: ParamDictionary = {
     width: "180px"
   };
   let inputStyle = {};
 
-  if(colorScheme == "light") {
+  if (colorScheme == "light") {
 
     setButtonStyle = {
       fontSize: "1rem",
@@ -446,7 +446,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
     };
 
-  } else if(colorScheme == "dark") {
+  } else if (colorScheme == "dark") {
 
     setButtonStyle = {
 
@@ -526,72 +526,72 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
   return (
     <body>
-      <div style={{alignItems:"anchor-center", height:"45px", backgroundColor: bgColor, width: "100%", position: "absolute", overflowY: "hidden", display: "flex", flexDirection: "row", }}>
-      <label style={labelStyle}>Node:</label>
-      <select
-        value={node}
-        onChange={(event) => { setNode(event.target.value); }}
-        style={dropDownStyle}
+      <div style={{ alignItems: "anchor-center", height: "45px", backgroundColor: bgColor, width: "100%", position: "absolute", overflowY: "hidden", display: "flex", flexDirection: "row", }}>
+        <label style={labelStyle}>Node:</label>
+        <select
+          value={node}
+          onChange={(event) => { setNode(event.target.value); }}
+          style={dropDownStyle}
         >
-        <option selected hidden>Select a Node</option>
-        {(nodeList ?? []).map((node) => (
-          <option key={node} value={node}>{node}</option>
-        ))}
-      </select>
+          <option selected hidden>Select a Node</option>
+          {(nodeList ?? []).map((node) => (
+            <option key={node} value={node}>{node}</option>
+          ))}
+        </select>
         <button
           style={setButtonStyle}
           onMouseEnter={() => setBgColor("#8f8f8f")}
-          onMouseLeave={() => colorScheme == "dark" ? setBgColor("#4d4d4d"): setBgColor("#d6d6d6")}
+          onMouseLeave={() => colorScheme == "dark" ? setBgColor("#4d4d4d") : setBgColor("#d6d6d6")}
           onClick={setParam}
           type="reset">
-            Set Parameters
+          Set Parameters
         </button>
         <label
           style={loadButtonStyle}
           onMouseEnter={() => setLoadButtonBgColor("#8f8f8f")}
-          onMouseLeave={() => colorScheme == "dark" ? setLoadButtonBgColor("#4d4d4d"): setLoadButtonBgColor("#d6d6d6")}
-          >
-          <input type="file" style={{display: "none"}} onChange={(event) => {loadFile(event.target.files)}}/>
-            Load
+          onMouseLeave={() => colorScheme == "dark" ? setLoadButtonBgColor("#4d4d4d") : setLoadButtonBgColor("#d6d6d6")}
+        >
+          <input type="file" style={{ display: "none" }} onChange={(event) => { loadFile(event.target.files) }} />
+          Load
         </label>
-        <div style={{left: "0px", bottom: "0px", height: "25px", width: "100%", position: "sticky"}}>
-      <p style={statusStyle}>status: {status}</p>
-    </div>
-    
+      </div>
+      <div style={{ left: "0px", bottom: "0px", height: "25px", width: "100%", position: "sticky" }}>
+        <p style={statusStyle}>status: {status}</p>
+      </div>
+
+      <div style={{
+        padding: "1rem",
+        scrollBehavior: "smooth",
+        maxHeight: "calc(100% - 25px)",
+        overflowY: "scroll",
+        fontFamily: "helvetica",
+        fontSize: "1rem",
+      }}>
+
+
+        <form>
+
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 0.75fr 1fr 0.75fr", rowGap: "0.2rem", }}>
+            <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px", }}>Parameter</b>
+            <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Type</b>
+            <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Value</b>
+            <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>New Value</b>
+
+            {(paramList ?? []).map((result) => (
+              <>
+                <div style={{ margin: "0px 4px 0px 4px", maxWidth: "200px" }} key={result.name}>{result.name}:</div>
+                <div style={{ margin: "0px 4px 0px 4px", maxWidth: "70px" }}>{getType(result.value)}</div>
+                <div style={{ margin: "0px 4px 0px 4px", maxWidth: "80px" }}>{getParameterValue(result.value)}</div>
+                <div style={{ margin: "0px 4px 0px 4px", maxWidth: "100px" }}>
+                  {createInputBox(result)}
+                </div>
+              </>
+            ))}
+          </div>
+        </form>
 
       </div>
-    <div style={{ padding: "1rem",
-                  scrollBehavior: "smooth",
-                  maxHeight:"calc(100% - 25px)",
-                  overflowY: "scroll",
-                  fontFamily: "helvetica",
-                  fontSize: "1rem",
-                  }}>
-
-
-      <form>
-
-  
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 0.75fr 1fr 0.75fr", rowGap: "0.2rem",  }}>
-          <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" , }}>Parameter</b>
-          <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Type</b>
-          <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Value</b>
-          <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>New Value</b>
-
-          {(paramList ?? []).map((result) => (
-            <>
-              <div style={{margin: "0px 4px 0px 4px", maxWidth: "200px" }} key={result.name}>{result.name}:</div>
-              <div style={{margin: "0px 4px 0px 4px", maxWidth: "70px" }}>{getType(result.value)}</div>
-              <div style={{margin: "0px 4px 0px 4px", maxWidth: "80px" }}>{getParameterValue(result.value)}</div>
-              <div style={{margin: "0px 4px 0px 4px", maxWidth: "100px" }}>
-                {createInputBox(result)}
-                </div>
-            </>
-          ))}
-        </div>
-      </form>
-
-    </div>
 
     </body>
   );
