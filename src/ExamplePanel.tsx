@@ -392,10 +392,12 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
 
   //////////////////////// CSS STYLING //////////////////////////////
-
-  let setButtonStyle = { backgroundColor: '#a37be7' };
-  let loadButtonStyle = {  backgroundColor: '#a37be7'};
-  let dropDownStyle = {
+  interface ParamDictionary {
+    [key: string]: number | string | number[]; // Mixed types for flexibility
+}
+  let setButtonStyle: ParamDictionary= { backgroundColor: '#a37be7' };
+  let loadButtonStyle: ParamDictionary = {  backgroundColor: '#a37be7'};
+  let dropDownStyle: ParamDictionary = {
     width: "180px"
   };
   let inputStyle = {};
@@ -403,7 +405,6 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   if(colorScheme == "light") {
 
     setButtonStyle = {
-
       fontSize: "1rem",
       backgroundColor: bgColor,
       border: bgColor + " solid",
@@ -414,7 +415,6 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
     };
 
     loadButtonStyle = {
-
       fontSize: "1rem",
       backgroundColor: loadButtonBgColor,
       border: loadButtonBgColor + " solid",
@@ -427,7 +427,6 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
     };
 
     dropDownStyle = {
-
       fontSize: "1rem",
       padding: "3px",
       backgroundColor: "#f7f7f7",
