@@ -521,14 +521,16 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   };
   footerStyle;
 
+  const controlHeight = "45px";
+  const statusHeight = "25px";
   ///////////////////////////////////////////////////////////////////
 
   ///////////////////////// HTML PANEL //////////////////////////////
 
   return (
     <body>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <div style={{ alignItems: "anchor-center", height: "45px", backgroundColor: bgColor, width: "100%", position: "absolute", overflowY: "hidden", display: "flex", flexDirection: "row", }}>
+      <div style={{ display: "flex", flexDirection: "column",  width: "100%", position: "absolute", backgroundColor: bgColor}}>
+        <div style={{ position: "relative", alignItems: "anchor-center", height: controlHeight, overflowY: "hidden", display: "flex", flexDirection: "row", }}>
           <label style={labelStyle}>Node:</label>
           <select
             value={node}
@@ -557,7 +559,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
             Load
           </label>
         </div>
-        <div style={{ left: "0px", bottom: "0px", height: "25px", width: "100%" }}>
+        <div style={{ left: "0px", bottom: "0px", height: statusHeight, width: "100%" }}>
           <p style={statusStyle}>status: {status}</p>
         </div>
       </div>
@@ -569,6 +571,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
         overflowY: "scroll",
         fontFamily: "helvetica",
         fontSize: "1rem",
+        top: controlHeight,
       }}>
         <form>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 0.75fr 1fr 0.75fr", rowGap: "0.2rem", }}>
@@ -579,7 +582,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
             {(paramList ?? []).map((result) => (
               <>
-                <div style={{ margin: "0px 4px 0px 4px", maxWidth: "200px" }} key={result.name}>{result.name}:</div>
+                <div style={{ margin: "0px 4px 0px 4px", maxWidth: "200px", overflow: 'scroll' }} key={result.name}>{result.name}:</div>
                 <div style={{ margin: "0px 4px 0px 4px", maxWidth: "70px" }}>{getType(result.value)}</div>
                 <div style={{ margin: "0px 4px 0px 4px", maxWidth: "80px" }}>{getParameterValue(result.value)}</div>
                 <div style={{ margin: "0px 4px 0px 4px", maxWidth: "100px" }}>
