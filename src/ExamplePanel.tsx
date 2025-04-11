@@ -395,8 +395,9 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   interface ParamDictionary {
     [key: string]: number | string | number[]; // Mixed types for flexibility
   }
-  let setButtonStyle: ParamDictionary = { backgroundColor: '#a37be7' };
-  let loadButtonStyle: ParamDictionary = { backgroundColor: '#a37be7' };
+  const buttonColor = '#a37be7';
+  let setButtonStyle: ParamDictionary = { backgroundColor: buttonColor };
+  let loadButtonStyle: ParamDictionary = { backgroundColor: buttonColor };
   let dropDownStyle: ParamDictionary = {
     width: "180px"
   };
@@ -406,7 +407,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
     setButtonStyle = {
       fontSize: "1rem",
-      backgroundColor: bgColor,
+      backgroundColor: buttonColor,
       border: bgColor + " solid",
       padding: "8px",
       borderRadius: "4px",
@@ -416,7 +417,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
     loadButtonStyle = {
       fontSize: "1rem",
-      backgroundColor: loadButtonBgColor,
+      backgroundColor: buttonColor,
       border: loadButtonBgColor + " solid",
       margin: "36px 0px 36px 12px",
       padding: "8px",
@@ -451,7 +452,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
     setButtonStyle = {
 
       fontSize: "1rem",
-      backgroundColor: bgColor,
+      backgroundColor: buttonColor,
       border: bgColor + " solid",
       padding: "8px",
       borderRadius: "4px",
@@ -461,7 +462,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
     loadButtonStyle = {
       fontSize: "1rem",
-      backgroundColor: loadButtonBgColor,
+      backgroundColor: buttonColor,
       border: loadButtonBgColor + " solid",
       padding: "8px",
       borderRadius: "4px",
@@ -526,37 +527,39 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
   return (
     <body>
-      <div style={{ alignItems: "anchor-center", height: "45px", backgroundColor: bgColor, width: "100%", position: "absolute", overflowY: "hidden", display: "flex", flexDirection: "row", }}>
-        <label style={labelStyle}>Node:</label>
-        <select
-          value={node}
-          onChange={(event) => { setNode(event.target.value); }}
-          style={dropDownStyle}
-        >
-          <option selected hidden>Select a Node</option>
-          {(nodeList ?? []).map((node) => (
-            <option key={node} value={node}>{node}</option>
-          ))}
-        </select>
-        <button
-          style={setButtonStyle}
-          onMouseEnter={() => setBgColor("#8f8f8f")}
-          onMouseLeave={() => colorScheme == "dark" ? setBgColor("#4d4d4d") : setBgColor("#d6d6d6")}
-          onClick={setParam}
-          type="reset">
-          Set Parameters
-        </button>
-        <label
-          style={loadButtonStyle}
-          onMouseEnter={() => setLoadButtonBgColor("#8f8f8f")}
-          onMouseLeave={() => colorScheme == "dark" ? setLoadButtonBgColor("#4d4d4d") : setLoadButtonBgColor("#d6d6d6")}
-        >
-          <input type="file" style={{ display: "none" }} onChange={(event) => { loadFile(event.target.files) }} />
-          Load
-        </label>
-      </div>
-      <div style={{ left: "0px", bottom: "0px", height: "25px", width: "100%", position: "sticky" }}>
-        <p style={statusStyle}>status: {status}</p>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ alignItems: "anchor-center", height: "45px", backgroundColor: bgColor, width: "100%", position: "absolute", overflowY: "hidden", display: "flex", flexDirection: "row", }}>
+          <label style={labelStyle}>Node:</label>
+          <select
+            value={node}
+            onChange={(event) => { setNode(event.target.value); }}
+            style={dropDownStyle}
+          >
+            <option selected hidden>Select a Node</option>
+            {(nodeList ?? []).map((node) => (
+              <option key={node} value={node}>{node}</option>
+            ))}
+          </select>
+          <button
+            style={setButtonStyle}
+            onMouseEnter={() => setBgColor("#8f8f8f")}
+            onMouseLeave={() => colorScheme == "dark" ? setBgColor("#4d4d4d") : setBgColor("#d6d6d6")}
+            onClick={setParam}
+            type="reset">
+            Set Parameters
+          </button>
+          <label
+            style={loadButtonStyle}
+            onMouseEnter={() => setLoadButtonBgColor("#8f8f8f")}
+            onMouseLeave={() => colorScheme == "dark" ? setLoadButtonBgColor("#4d4d4d") : setLoadButtonBgColor("#d6d6d6")}
+          >
+            <input type="file" style={{ display: "none" }} onChange={(event) => { loadFile(event.target.files) }} />
+            Load
+          </label>
+        </div>
+        <div style={{ left: "0px", bottom: "0px", height: "25px", width: "100%" }}>
+          <p style={statusStyle}>status: {status}</p>
+        </div>
       </div>
 
       <div style={{
@@ -567,11 +570,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
         fontFamily: "helvetica",
         fontSize: "1rem",
       }}>
-
-
         <form>
-
-
           <div style={{ display: "grid", gridTemplateColumns: "1fr 0.75fr 1fr 0.75fr", rowGap: "0.2rem", }}>
             <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px", }}>Parameter</b>
             <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Type</b>
