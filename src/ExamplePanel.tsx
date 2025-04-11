@@ -526,7 +526,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
 
   return (
     <body>
-      <div style={{alignItems:"anchor-center", height:"45px", backgroundColor: bgColor, width: "100%", position: "absolute", overflowY: "hidden", display: "flex", flexDirection: "column", }}>
+      <div style={{alignItems:"anchor-center", height:"45px", backgroundColor: bgColor, width: "100%", position: "absolute", overflowY: "hidden", display: "flex", flexDirection: "row", }}>
       <label style={labelStyle}>Node:</label>
       <select
         value={node}
