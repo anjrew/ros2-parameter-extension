@@ -419,7 +419,6 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       fontSize: "1rem",
       backgroundColor: buttonColor,
       border: loadButtonBgColor + " solid",
-      margin: "36px 0px 36px 12px",
       padding: "8px",
       borderRadius: "4px",
       color: "#333333",
@@ -468,7 +467,6 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
       borderRadius: "4px",
       color: "#f7f7f7",
       fontWeight: "500",
-
     };
 
     dropDownStyle = {
@@ -521,8 +519,8 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   };
   footerStyle;
 
-  const controlHeight = "45px";
-  const statusHeight = "25px";
+  const controlHeight = 45;
+  const statusHeight = 40;
   ///////////////////////////////////////////////////////////////////
 
   ///////////////////////// HTML PANEL //////////////////////////////
@@ -530,7 +528,7 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
   return (
     <body>
       <div style={{ display: "flex", flexDirection: "column",  width: "100%", position: "absolute", backgroundColor: bgColor}}>
-        <div style={{ position: "relative", alignItems: "anchor-center", height: controlHeight, overflowY: "hidden", display: "flex", flexDirection: "row", }}>
+        <div style={{ position: "relative", alignItems: "anchor-center", height: controlHeight + "px", overflowY: "hidden", display: "flex", flexDirection: "row", }}>
           <label style={labelStyle}>Node:</label>
           <select
             value={node}
@@ -559,26 +557,29 @@ function ExamplePanel({ context }: { context: PanelExtensionContext }): JSX.Elem
             Load
           </label>
         </div>
-        <div style={{ left: "0px", bottom: "0px", height: statusHeight, width: "100%" }}>
+        <div style={{ left: "0px", bottom: "0px", height: statusHeight + "px", width: "100%" }}>
           <p style={statusStyle}>status: {status}</p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 0.75fr 1fr 0.75fr", rowGap: "0.2rem", }}>
+              <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px", }}>Parameter</b>
+              <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Type</b>
+              <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Value</b>
+              <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>New Value</b>
         </div>
       </div>
 
       <div style={{
         padding: "1rem",
+        position: "absolute",
+        top: controlHeight + statusHeight + 50 + "px",
         scrollBehavior: "smooth",
         maxHeight: "calc(100% - 25px)",
         overflowY: "scroll",
         fontFamily: "helvetica",
         fontSize: "1rem",
-        top: controlHeight,
       }}>
         <form>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 0.75fr 1fr 0.75fr", rowGap: "0.2rem", }}>
-            <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px", }}>Parameter</b>
-            <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Type</b>
-            <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>Value</b>
-            <b style={{ borderBottom: "1px solid", padding: "2px", marginBottom: "3px" }}>New Value</b>
 
             {(paramList ?? []).map((result) => (
               <>
