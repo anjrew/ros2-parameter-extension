@@ -19,6 +19,13 @@
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "yarn install",
 	"postStartCommand": "yarn install",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mhutchie.git-graph"
+			]
+		}
+	},
 
 
 	// Configure tool-specific properties.
